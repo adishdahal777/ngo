@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Website;
+use App\Http\Controllers\Ngo;
 use App\Http\Controllers\People;
 
 /*
@@ -26,7 +27,15 @@ Route::middleware('auth')->group(function () {
     });
 
     // NGO routes
-    Route::middleware('role:1')->prefix('ngo')->name('ngo.')->group(function () {
+    Route::middleware('role:1')->prefix('ngo')->group(function () {
+
+        Route::get('/profile', [Ngo\NgoController::class, 'show'])->name('ngo.profile');
+        Route::get('/profile/edit', [Ngo\NgoController::class, 'edit'])->name('ngo.profile.edit');
+        Route::put('/profile', [Ngo\NgoController::class, 'update'])->name('ngo.profile.update');
+        Route::get('/events', [Ngo\EventController::class, 'events'])->name('ngo.events');
+        Route::get('/volunteers', [Ngo\VolunteerController::class, 'volunteers'])->name('ngo.volunteers');
+        Route::get('/donations', [Ngo\DonationController::class, 'donations'])->name('ngo.donations');
+        Route::get('/notifications', [Ngo\NgoController::class, 'notifications'])->name('ngo.notifications');
 
         Route::get('/dashboard', function () {
             return view('ngo.dashboard');

@@ -29,8 +29,12 @@
 
     <div class="flex pt-16">
         <!-- Left Sidebar -->
-        @include('layouts.people.left-sidebar')
-
+        @if (auth()->user()->isPeople())
+            @include('layouts.people.left-sidebar')
+        @endif
+        @if (auth()->user()->isNgo())
+            @include('layouts.ngo.left-sidebar')
+        @endif
         <!-- Main Content -->
         <div class="flex-1 ml-80 mr-80 px-4 py-6">
             <div class="max-w-3xl mx-auto">

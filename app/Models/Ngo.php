@@ -32,4 +32,14 @@ class Ngo extends Model
     {
         return $this->belongsToMany(User::class, 'user_ngo_favorites', 'ngo_id', 'user_id')->withTimestamps();
     }
+
+    public function events()
+    {
+        return $this->hasMany(Event::class);
+    }
+
+    public function donations()
+    {
+        return $this->hasMany(Donation::class);
+    }
 }
