@@ -3,7 +3,7 @@
 
 @section('content')
     <!-- Stories Section -->
-    <div class="bg-white rounded-lg shadow-sm p-4 mb-4">
+    <div class="bg-white max-w-full rounded-lg shadow-sm p-4 mb-4">
         <div class="flex space-x-2 overflow-x-auto scrollbar-hide">
             <!-- Create Story -->
             <div class="flex-shrink-0 w-28 h-48 bg-gray-200 rounded-lg relative cursor-pointer hover:opacity-90">
@@ -138,7 +138,7 @@
                     <span id="likes-{{ $post->id }}" class="text-sm text-gray-500 ml-2">{{ count($post->likes) }}</span>
                 </div>
                 <div class="flex items-center space-x-4 text-sm text-gray-500">
-                    <span>{{ count($post->comments) }} comments</span>
+                    <span><span id="comment-{{ $post->id }}">{{ count($post->comments) }}</span> comments</span>
                 </div>
             </div>
 
@@ -152,6 +152,7 @@
                     <span class="text-gray-600 font-medium">Comment</span>
                 </button>
             </div>
+            <div class="comments"></div>
         </div>
     </div>
     @endforeach
@@ -222,13 +223,13 @@
             if (!comment) return;
 
             try {
-                let response = await fetch(`/posts/${postId}/comments`, {
+                let response = await fetch("{{ route('common.feed.comment') }}", {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                         'X-CSRF-TOKEN': csrfToken
                     },
-                    body: JSON.stringify({ content: comment , post_id: postId })
+                    body: JSON.stringify({ comment: comment , post_id: postId })
                 });
 
                 if (response.ok) {
@@ -236,8 +237,25 @@
 
                     // create new comment div
                     const newComment = document.createElement('div');
-                    newComment.className = "bg-gray-100 p-2 rounded-lg";
-                    newComment.textContent = data.content; // assuming backend returns {content: "..."}
+                    newComment.className = "bg-gray-100 p-2 rounded-lg flex space-between";
+                    const newCommentText = document.createElement('p');
+                    newCommentText.textContent = data.comment;
+                    // const commentedBy= document.createElement('p');
+                    // commentedBy.textContent = "Commented by " + data.user.name;
+                    // newCommentDate.className = "text-gray-500";
+                    newComment.appendChild(newCommentText);
+                    // newComment.appendChild(commentedBy);
+
+                    // add to comments section
+                    commentsSection.appendChild(newComment);
+
+                    // update likes count
+                    document.querySelector('#comment-' + postId).textContent = parseInt(document.querySelector('#likes-' + postId).textContent) + 1;
+
+                    // reset input
+                    input.value = "";
+                
+                    newComment.textContent = data.comment; 
                     
                     // insert above the input box
                     commentsSection.insertBefore(newComment, commentBox);
@@ -252,11 +270,16 @@
             }
         });
 
-        // optional: submit with Enter key
+        // submit with Enter key
         input.addEventListener('keypress', e => {
             if (e.key === 'Enter') {
                 submitBtn.click();
             }
+        });
+
+        // remove all of this when the comment button is clicked 
+        button.addEventListener('click', () => {
+            commentBox.remove();
         });
     });
 }); 

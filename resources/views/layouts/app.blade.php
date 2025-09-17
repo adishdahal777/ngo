@@ -53,7 +53,7 @@
         </div>
 
         <!-- Right Sidebar -->
-        @include('layouts.people.right-sidebar')
+        {{-- @include('layouts.people.right-sidebar') --}}
 
     </div>
 
