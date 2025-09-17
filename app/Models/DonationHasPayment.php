@@ -15,4 +15,14 @@ class DonationHasPayment extends Model
         'payment_response',
         'status',
     ];
+
+
+    protected $casts = [
+        'payment_response' => 'array',
+    ];
+
+    public function donation()
+    {
+        return $this->belongsTo(Donation::class);
+    }
 }

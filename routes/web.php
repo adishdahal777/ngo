@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Ngo;
 use App\Http\Controllers\Auth;
+use App\Http\Controllers\Admin;
 use App\Http\Controllers\People;
 use App\Http\Controllers\Website;
 use Illuminate\Support\Facades\Route;
@@ -30,10 +31,16 @@ Route::middleware('auth')->group(function () {
     Route::get('/switch-back', [Auth\SettingController::class, 'switchBack'])->name('switch.back');
 
 
-    Route::middleware('role:0')->prefix('admin')->name('admin.')->group(function () {
+    Route::middleware('role:0')->prefix('admin')->group(function () {
+
+        Route::get('/ngos', [Admin\AdminController::class, 'ngos'])->name('admin.ngos');
+        Route::get('/ngos/{id}', [Admin\AdminController::class, 'show'])->name('admin.ngos.show');
+        Route::post('/ngos/{id}/verify', [Admin\AdminController::class, 'verifyNgo'])->name('admin.ngos.verify');
+        Route::post('/ngos/{id}/reject', [Admin\AdminController::class, 'rejectNgo'])->name('admin.ngos.reject');
+
         Route::get('/dashboard', function () {
             return view('admin.dashboard');
-        })->name('dashboard');
+        })->name('admin.dashboard');
     });
 
     // NGO routes
@@ -51,7 +58,10 @@ Route::middleware('auth')->group(function () {
         Route::post('/volunteers/{eventId}/{userId}/verify', [Ngo\VolunteerController::class, 'verifyVolunteer'])->name('ngo.volunteers.verify');
 
         Route::get('/donations', [Ngo\DonationController::class, 'donations'])->name('ngo.donations');
-        Route::get('/notifications', [Ngo\NgoController::class, 'notifications'])->name('ngo.notifications');
+        Route::post('/donations/{donationId}/verify', [Ngo\DonationController::class, 'verifyDonation'])->name('ngo.donations.verify');
+
+        Route::get('/notifications', [Ngo\NotificationController::class, 'notifications'])->name('ngo.notifications');
+        Route::post('/notifications/{id}/read', [Ngo\NotificationController::class, 'markAsRead'])->name('ngo.notifications.read');
 
         Route::get('/dashboard', function () {
             return view('ngo.dashboard');
@@ -76,14 +86,25 @@ Route::middleware('auth')->group(function () {
         Route::post('/volunteer/apply', [People\VolunteerController::class, 'apply'])->name('people.volunteer.apply');
 
         // Donations Routes
+        // Route::get('/donations', [People\DonationController::class, 'index'])->name('people.donations');
+        // Route::post('/donate/payment', [People\DonationController::class, 'showPaymentForm'])->name('donations.payment.request');
+        // Route::get('/donation/payment/success', [People\DonationController::class, 'paymentSuccess'])->name('payment.success');
+        // Route::get('/donation/payment/fail', [People\DonationController::class, 'paymentFail'])->name('payment.fail');
+
         Route::get('/donations', [People\DonationController::class, 'index'])->name('people.donations');
-        Route::post('/donate/payment', [People\DonationController::class, 'showPaymentForm'])->name('donations.payment.request');
-        Route::get('/donation/payment/success', [People\DonationController::class, 'paymentSuccess'])->name('payment.success');
-        Route::get('/donation/payment/fail', [People\DonationController::class, 'paymentFail'])->name('payment.fail');
+        Route::post('/donations/show-payment', [People\DonationController::class, 'showPaymentForm'])->name('people.donations.showPaymentForm');
+        Route::post('/donations', [People\DonationController::class, 'create'])->name('people.donations.create');
+        Route::get('/donations/success', [People\DonationController::class, 'paymentSuccess'])->name('people.donations.success');
+        Route::get('/donations/fail', [People\DonationController::class, 'paymentFail'])->name('people.donations.fail');
+
 
         // Notifications Routes
         Route::get('/notifications', [People\NotificationController::class, 'index'])->name('people.notifications');
         Route::post('/notifications/{id}/read', [People\NotificationController::class, 'markAsRead'])->name('people.notifications.read');
+
+
+        Route::get('/ngo/register', [People\NgoRegisterController::class, 'showRegistrationForm'])->name('people.ngo.register.form');
+        Route::post('/ngo/register', [People\NgoRegisterController::class, 'register'])->name('people.ngo.register');
 
 
         // NGO Profile Routes

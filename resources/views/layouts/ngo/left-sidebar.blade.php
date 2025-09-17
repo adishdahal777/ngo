@@ -11,7 +11,7 @@
             @endif
         </div>
         <span
-            class="font-medium text-gray-900">{{ auth()->user()->ngo ? auth()->user()->ngo->name : auth()->user()->name }}</span>
+            class="font-medium text-gray-900">{{ auth()->user()->isNgo() ? auth()->user()->name : auth()->user()->ngo->name }}</span>
     </div>
 
     <!-- Navigation Items -->

@@ -5,79 +5,106 @@ namespace App\Http\Controllers\People;
 use App\Http\Controllers\Controller;
 use App\Models\Donation;
 use App\Models\DonationHasPayment;
-use App\Models\Ngo;
+use App\Models\User;
+use App\Notifications\DonationReceived;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class DonationController extends Controller
 {
-    public function index()
+    public function __construct()
     {
-        $ngos = Ngo::get();
-
-        return view('donation.donate', compact('ngos'));
+        $this->middleware(['auth', 'verified']);
     }
 
-    // Show payment page or store donation immediately for non-esewa
+    public function index()
+    {
+        $ngos = User::where('role_id', 1)->where('verified', true)->get();
+        $donations = Donation::where('user_id', Auth::id())->with(['ngo', 'payments'])->paginate(10);
+        return view('people.donations.index', compact('ngos', 'donations'));
+    }
+
     public function showPaymentForm(Request $request)
     {
         $request->validate([
-            'ngo_id' => 'required|exists:ngos,id',
-            'donation_amount' => 'required|integer|min:10',
+            'ngo_id' => 'required|exists:users,id',
+            'donation_amount' => 'required|numeric|min:10',
             'payment_method' => 'required|in:esewa,khalti,cash,cheque',
         ]);
 
-        $total = $request->donation_amount;
+        $ngo = User::where('role_id', 1)->findOrFail($request->ngo_id);
+        if (!$ngo->verified) {
+            return redirect()->back()->with('error', 'This NGO is not verified to accept donations.');
+        }
 
         if ($request->payment_method === 'esewa') {
-            // Pass data to Blade for eSewa payment
-            return view('donation.payment', [
-                'total' => $total,
+            return view('people.donations.payment', [
+                'total' => $request->donation_amount,
                 'ngo_id' => $request->ngo_id,
                 'donation_amount' => $request->donation_amount,
                 'payment_method' => $request->payment_method,
             ]);
         }
 
-        // Non-esewa payments → directly store donation
         return $this->storeDonation($request);
     }
 
-    // Store donation in DB (kept exactly as you wrote)
     protected function storeDonation(Request $request, $paymentResponse = null)
     {
         $request->validate([
-            'ngo_id' => 'required|exists:ngos,id',
-            'donation_amount' => 'required|integer|min:10',
+            'ngo_id' => 'required|exists:users,id',
+            'donation_amount' => 'required|numeric|min:10',
             'payment_method' => 'required|in:esewa,khalti,cash,cheque',
         ]);
 
-        DB::transaction(function () use ($request) {
+        $ngo = User::where('role_id', 1)->findOrFail($request->ngo_id);
+        if (!$ngo->verified) {
+            return redirect()->back()->with('error', 'This NGO is not verified to accept donations.');
+        }
+
+        $status = in_array($request->payment_method, ['cash', 'cheque']) ? 'pending' : 'completed';
+        $paymentStatus = in_array($request->payment_method, ['cash', 'cheque']) ? 'pending' : 'success';
+
+        DB::transaction(function () use ($request, $status, $paymentStatus, $paymentResponse) {
             $donation = Donation::create([
                 'user_id' => Auth::id(),
                 'ngo_id' => $request->ngo_id,
                 'donation_amount' => $request->donation_amount,
-                'status' => 'pending',
+                'status' => $status,
             ]);
 
             DonationHasPayment::create([
                 'donation_id' => $donation->id,
                 'payment_method' => $request->payment_method,
-                'payment_response' => json_encode([
+                'payment_response' => json_encode($paymentResponse ?? [
                     'amount' => $request->donation_amount,
-                    'status' => 'success',
-                    'transaction_id' => 'TXN'.rand(0001, 9999),
+                    'status' => $paymentStatus,
+                    'transaction_id' => 'TXN' . rand(1000, 9999),
                 ]),
+                'status' => $paymentStatus,
             ]);
+
+            // Notify the donating user for completed (eSewa/Khalti) donations
+            if ($status === 'completed') {
+                $user = User::find($donation->user_id);
+                $user->notify(new DonationReceived($donation));
+            }
         });
 
         return redirect()->route('common.feed')->with('success', 'Donation created successfully!');
     }
 
-    // eSewa success callback
     public function paymentSuccess(Request $request)
     {
+        $request->validate([
+            'ngo_id' => 'required|exists:users,id',
+            'donation_amount' => 'required|numeric|min:10',
+            'amount' => 'required|numeric|min:10',
+            'status' => 'required|in:success',
+            'transaction_id' => 'required|string',
+        ]);
+
         $paymentResponse = [
             'amount' => $request->query('amount'),
             'status' => $request->query('status'),
@@ -93,7 +120,6 @@ class DonationController extends Controller
         return $this->storeDonation($fakeRequest, $paymentResponse);
     }
 
-    // eSewa failure callback
     public function paymentFail()
     {
         return redirect()->route('common.feed')->with('error', 'Donation failed or cancelled!');

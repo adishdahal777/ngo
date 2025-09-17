@@ -21,10 +21,21 @@ class LoginController extends Controller
         ]);
 
         if (Auth::attempt($credentials)) {
+            $user = Auth::user();
+
+            // Check if user is verified
+            if (!$user->verified) {
+                Auth::logout();
+                $request->session()->invalidate();
+                $request->session()->regenerateToken();
+                return back()->withErrors([
+                    'email' => 'Your account is not verified. Please contact an admin to verify your account.',
+                ])->onlyInput('email');
+            }
+
             $request->session()->regenerate();
 
             // Redirect based on user role
-            $user = Auth::user();
             if ($user->role_id === 0) {
                 return redirect()->route('admin.dashboard');
             } elseif ($user->role_id === 1) {

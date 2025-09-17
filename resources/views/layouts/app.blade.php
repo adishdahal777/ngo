@@ -25,37 +25,62 @@
 
 <body class="bg-gray-100">
     <!-- Header -->
-    @include('layouts.partials.header')
+    @if (!auth()->user()->isAdmin())
+        @include('layouts.partials.header')
+    @else
+        @include('layouts.admin.header')
+    @endif
 
-    <div class="flex pt-16">
-        <!-- Left Sidebar -->
-        @if (auth()->user()->isPeople())
-            @include('layouts.people.left-sidebar')
-        @endif
-        @if (auth()->user()->isNgo())
-            @include('layouts.ngo.left-sidebar')
-        @endif
-        <!-- Main Content -->
-        <div class="flex-1 ml-80 mr-80 px-4 py-6">
-            <div class="max-w-3xl mx-auto">
-                @if (session('success'))
-                    <div class="mb-4 p-4 bg-green-100 text-green-700 rounded-lg">
-                        {{ session('success') }}
-                    </div>
-                @endif
-                @if (session('error'))
-                    <div class="mb-4 p-4 bg-red-100 text-red-700 rounded-lg">
-                        {{ session('error') }}
-                    </div>
-                @endif
-                @yield('content')
+
+
+    @if (!auth()->user()->isAdmin())
+        <div class="flex pt-16">
+            <!-- Left Sidebar -->
+            @if (auth()->user()->isPeople())
+                @include('layouts.people.left-sidebar')
+            @endif
+            @if (auth()->user()->isNgo())
+                @include('layouts.ngo.left-sidebar')
+            @endif
+            <!-- Main Content -->
+            <div class="flex-1 ml-80 mr-80 px-4 py-6">
+                <div class="max-w-3xl mx-auto">
+                    @if (session('success'))
+                        <div class="mb-4 p-4 bg-green-100 text-green-700 rounded-lg">
+                            {{ session('success') }}
+                        </div>
+                    @endif
+                    @if (session('error'))
+                        <div class="mb-4 p-4 bg-red-100 text-red-700 rounded-lg">
+                            {{ session('error') }}
+                        </div>
+                    @endif
+                    @yield('content')
+                </div>
+            </div>
+
+            <!-- Right Sidebar -->
+            @include('layouts.people.right-sidebar')
+        </div>
+    @else
+        <div class="flex pt-16">
+            <div class="flex-1  px-4 py-6">
+                <div class="max-w-7xl mx-auto">
+                    @if (session('success'))
+                        <div class="mb-4 p-4 bg-green-100 text-green-700 rounded-lg">
+                            {{ session('success') }}
+                        </div>
+                    @endif
+                    @if (session('error'))
+                        <div class="mb-4 p-4 bg-red-100 text-red-700 rounded-lg">
+                            {{ session('error') }}
+                        </div>
+                    @endif
+                    @yield('content')
+                </div>
             </div>
         </div>
-
-        <!-- Right Sidebar -->
-        @include('layouts.people.right-sidebar')
-
-    </div>
+    @endif
 
 
 

@@ -30,6 +30,4 @@
             {{ $notifications->links() }}
         @endif
     </div>
-    </div>
-    </div>
 @endsection

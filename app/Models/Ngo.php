@@ -17,6 +17,7 @@ class Ngo extends Model
         'logo',
         'category',
         'subcategory',
+        'user_id',
     ];
 
     protected $casts = [
