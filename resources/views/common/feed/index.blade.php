@@ -2,7 +2,7 @@
 
 
 @section('content')
-    <!-- Stories Section -->
+    {{-- <!-- Stories Section -->
     <div class="bg-white max-w-full rounded-lg shadow-sm p-4 mb-4">
         <div class="flex space-x-2 overflow-x-auto scrollbar-hide">
             <!-- Create Story -->
@@ -55,14 +55,20 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> --}}
 
     <!-- Create Post -->
+    @if (auth()->user()->role_id === 1)
+        
     <div class="bg-white rounded-lg shadow-sm p-4 mb-4">
-        <div class="flex items-center space-x-3 mb-4">
+        <div class="flex justify-stretch items-center space-x-3 mb-4">
             <div class="w-10 h-10 bg-gray-300 rounded-full"></div>
-            <input type="text" placeholder="What's on your mind, Adish?"
+            <form id="post" action="{{ route('common.feed.create') }}" class="items-center flex flex-row justify-between" method="POST">
+                @csrf
+            </form>
+            <input form="post" type="text" name="description" placeholder="What's on your mind, {{auth()->user()->name}}?"
                 class="flex-1 bg-gray-100 rounded-full px-4 py-2 focus:outline-none hover:bg-gray-200 cursor-pointer">
+            <button form="post" type="submit" class="flex items-center space-x-2 px-4 py-2 rounded-lg hover:bg-gray-100">Create Post </button>
         </div>
         <div class="flex items-center justify-between pt-2 border-t border-gray-200">
             <div class="flex space-x-4">
@@ -81,6 +87,7 @@
             </div>
         </div>
     </div>
+    @endif
 
     <!-- Post -->
     @foreach ($posts as $post)
@@ -240,11 +247,7 @@
                     newComment.className = "bg-gray-100 p-2 rounded-lg flex space-between";
                     const newCommentText = document.createElement('p');
                     newCommentText.textContent = data.comment;
-                    // const commentedBy= document.createElement('p');
-                    // commentedBy.textContent = "Commented by " + data.user.name;
-                    // newCommentDate.className = "text-gray-500";
                     newComment.appendChild(newCommentText);
-                    // newComment.appendChild(commentedBy);
 
                     // add to comments section
                     commentsSection.appendChild(newComment);

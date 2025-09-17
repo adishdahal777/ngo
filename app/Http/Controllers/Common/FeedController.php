@@ -63,4 +63,20 @@ class FeedController extends Controller
             'comment' => $request->comment,
         ], 201);
     }
+
+    public function create(Request $request)
+    {
+        $request->validate([
+            'description' => 'required|string|max:255',
+        ]);
+
+        $user = auth()->user();
+
+        Post::create([
+            'description' => $request->description,
+            'user_id' => $user->id,
+        ]);
+
+        return redirect()->route('common.feed')->with('success', 'Post created successfully!');
+    }
 }
