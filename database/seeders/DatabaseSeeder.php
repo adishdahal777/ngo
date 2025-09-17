@@ -25,6 +25,7 @@ class DatabaseSeeder extends Seeder
             NgoSeeder::class,
             EventsSeeder::class,
             PostSeeder::class,
+            MediaSeeder::class,
         ]);
     }
 }

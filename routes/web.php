@@ -114,6 +114,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/feed', [Common\FeedController::class, 'index'])->name('common.feed');
         Route::post('/feed/like', [Common\FeedController::class, 'like'])->name('common.feed.like');
         Route::post('/feed/comment', [Common\FeedController::class, 'comment'])->name('common.feed.comment');
+        Route::post('/feed', [Common\FeedController::class, 'create'])->name('common.feed.create');
 
         Route::get('/ngos/search', [People\NgoSearchController::class, 'index'])->name('people.ngo.search');
     });

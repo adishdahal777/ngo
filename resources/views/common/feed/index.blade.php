@@ -2,7 +2,7 @@
 
 
 @section('content')
-    <!-- Stories Section -->
+    {{-- <!-- Stories Section -->
     <div class="bg-white max-w-full rounded-lg shadow-sm p-4 mb-4">
         <div class="flex space-x-2 overflow-x-auto scrollbar-hide">
             <!-- Create Story -->
@@ -55,235 +55,327 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> --}}
 
     <!-- Create Post -->
-    <div class="bg-white rounded-lg shadow-sm p-4 mb-4">
-        <div class="flex items-center space-x-3 mb-4">
-            <div class="w-10 h-10 bg-gray-300 rounded-full"></div>
-            <input type="text" placeholder="What's on your mind, Adish?"
-                class="flex-1 bg-gray-100 rounded-full px-4 py-2 focus:outline-none hover:bg-gray-200 cursor-pointer">
-        </div>
-        <div class="flex items-center justify-between pt-2 border-t border-gray-200">
-            <div class="flex space-x-4">
-                <button class="flex items-center space-x-2 px-4 py-2 rounded-lg hover:bg-gray-100">
-                    <i class="fas fa-video text-red-500"></i>
-                    <span class="text-gray-600 font-medium">Live video</span>
-                </button>
-                <button class="flex items-center space-x-2 px-4 py-2 rounded-lg hover:bg-gray-100">
-                    <i class="fas fa-images text-green-500"></i>
-                    <span class="text-gray-600 font-medium">Photo/video</span>
-                </button>
-                <button class="flex items-center space-x-2 px-4 py-2 rounded-lg hover:bg-gray-100">
-                    <i class="fas fa-smile text-yellow-500"></i>
-                    <span class="text-gray-600 font-medium">Reel</span>
-                </button>
+    @if (auth()->user()->isNgo())
+        <div class="bg-white rounded-lg shadow-sm p-4 mb-4">
+            <div class="flex justify-stretch items-center space-x-3 mb-4">
+                <div class="w-10 h-10 bg-gray-300 rounded-full"></div>
+                <form id="post" action="{{ route('common.feed.create') }}"
+                    class="items-center flex flex-row justify-between" method="POST">
+                    @csrf
+                </form>
+                <input form="post" type="text" name="description"
+                    placeholder="What's on your mind, {{ auth()->user()->name }}?"
+                    class="flex-1 bg-gray-100 rounded-full px-4 py-2 focus:outline-none hover:bg-gray-200 cursor-pointer">
+                <button form="post" type="submit"
+                    class="flex items-center space-x-2 px-4 py-2 rounded-lg hover:bg-gray-100">Create Post </button>
+            </div>
+            <div class="flex items-center justify-between pt-2 border-t border-gray-200">
+                <div class="flex space-x-4">
+
+                    <button class="flex items-center space-x-2 px-4 py-2 rounded-lg hover:bg-gray-100">
+                        <i class="fas fa-images text-green-500"></i>
+                        <span class="text-gray-600 font-medium">Photo/video</span>
+                    </button>
+
+                </div>
             </div>
         </div>
-    </div>
+    @endif
 
     <!-- Post -->
     @foreach ($posts as $post)
-        
-    <div id="post-{{ $post->id }}" class="bg-white rounded-lg shadow-sm mb-4">
-        <!-- Post Header -->
-        <div class="p-4 flex items-center justify-between">
-            <div class="flex items-center space-x-3">
-                <div class="w-10 h-10 bg-gray-800 rounded-full"></div>
-                <div>
-                    <h3 class="font-medium text-gray-900">{{ $post->user->name }}</h3>
-                    <p class="text-sm text-gray-500">{{ $post->created_at->diffForHumans() }}· <i class="fas fa-globe-americas"></i></p>
-                </div>
-            </div>
-            <div class="flex items-center space-x-2">
-                <button class="p-2 hover:bg-gray-100 rounded-full">
-                    <i class="fas fa-ellipsis-h text-gray-500"></i>
-                </button>
-                <button class="p-2 hover:bg-gray-100 rounded-full">
-                    <i class="fas fa-times text-gray-500"></i>
-                </button>
-            </div>
-        </div>
-
-        <!-- Post Content -->
-        <div class="px-4 pb-3">
-            <p class="text-gray-900">{{ $post->description }}</p>
-        </div>
-
-        <!-- Post Images -->
-        <div class="grid grid-cols-2 gap-1">
-            <div class="bg-gray-300 h-64"></div>
-            <div class="grid grid-rows-2 gap-1">
-                <div class="bg-gray-400 h-32"></div>
-                <div class="bg-gray-500 h-32 relative">
-                    <div class="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-                        <span class="text-white text-2xl font-bold">+51</span>
+        <div id="post-{{ $post->id }}" class="bg-white rounded-lg shadow-sm mb-4">
+            <!-- Post Header -->
+            <div class="p-4 flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-gray-800 rounded-full"></div>
+                    <div>
+                        <h3 class="font-medium text-gray-900">{{ $post->user->name }}</h3>
+                        <p class="text-sm text-gray-500">{{ $post->created_at->diffForHumans() }}· <i
+                                class="fas fa-globe-americas"></i></p>
                     </div>
                 </div>
+                <div class="flex items-center space-x-2">
+                    <button class="p-2 hover:bg-gray-100 rounded-full">
+                        <i class="fas fa-ellipsis-h text-gray-500"></i>
+                    </button>
+                    <button class="p-2 hover:bg-gray-100 rounded-full">
+                        <i class="fas fa-times text-gray-500"></i>
+                    </button>
+                </div>
             </div>
-        </div>
 
-        <!-- Post Actions -->
-        <div class="p-4">
-            <div class="flex items-center justify-between mb-3">
-                <div class="flex items-center space-x-1">
-                    <div class="flex -space-x-1">
-                        <div class="w-5 h-5 bg-blue-600 rounded-full border border-white flex items-center justify-center">
-                            <i class="fas fa-thumbs-up text-white text-xs"></i>
+            <!-- Post Content -->
+            <div class="px-4 pb-3">
+                <p class="text-gray-900">{{ $post->description }}</p>
+            </div>
+
+
+            <!-- Post Images -->
+            <div class="w-full max-w-2xl mx-auto">
+                @if (count($post->medias) > 0)
+                    <!-- Single Image -->
+                    @if (count($post->medias) == 1)
+                        <div class="w-full">
+                            <img src="{{ asset($post->medias[0]->media_path_name) }}" alt="Post Image"
+                                class="w-full h-auto max-h-[500px] object-cover rounded-lg">
                         </div>
-                        <div class="w-5 h-5 bg-red-600 rounded-full border border-white flex items-center justify-center">
-                            <i class="fas fa-heart text-white text-xs"></i>
+                        <!-- Two Images -->
+                    @elseif (count($post->medias) == 2)
+                        <div class="grid grid-cols-2 gap-1">
+                            @foreach ($post->medias as $media)
+                                <img src="{{ asset($media->media_path_name) }}" alt="Post Image"
+                                    class="w-full h-64 object-cover rounded-lg">
+                            @endforeach
                         </div>
+                        <!-- Three Images -->
+                    @elseif (count($post->medias) == 3)
+                        <div class="grid grid-cols-2 gap-1">
+                            <img src="{{ asset($post->medias[0]->media_path_name) }}" alt="Post Image"
+                                class="w-full h-[400px] object-cover rounded-lg">
+                            <div class="grid grid-rows-2 gap-1">
+                                <img src="{{ asset($post->medias[1]->media_path_name) }}" alt="Post Image"
+                                    class="w-full h-[196px] object-cover rounded-lg">
+                                <img src="{{ asset($post->medias[2]->media_path_name) }}" alt="Post Image"
+                                    class="w-full h-[196px] object-cover rounded-lg">
+                            </div>
+                        </div>
+                        <!-- Four Images -->
+                    @elseif (count($post->medias) == 4)
+                        <div class="grid grid-cols-2 gap-1">
+                            <img src="{{ asset($post->medias[0]->media_path_name) }}" alt="Post Image"
+                                class="w-full h-[400px] object-cover rounded-lg">
+                            <div class="grid grid-rows-2 gap-1">
+                                <img src="{{ asset($post->medias[1]->media_path_name) }}" alt="Post Image"
+                                    class="w-full h-[196px] object-cover rounded-lg">
+                                <div class="relative">
+                                    <img src="{{ asset($post->medias[2]->media_path_name) }}" alt="Post Image"
+                                        class="w-full h-[196px] object-cover rounded-lg">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-1 mt-1">
+                            <img src="{{ asset($post->medias[3]->media_path_name) }}" alt="Post Image"
+                                class="w-full h-[196px] object-cover rounded-lg">
+                            <div class="relative"></div>
+                        </div>
+                        <!-- Five or More Images -->
+                    @else
+                        <div class="grid grid-cols-2 gap-1">
+                            <img src="{{ asset($post->medias[0]->media_path_name) }}" alt="Post Image"
+                                class="w-full h-[400px] object-cover rounded-lg">
+                            <div class="grid grid-rows-2 gap-1">
+                                <img src="{{ asset($post->medias[1]->media_path_name) }}" alt="Post Image"
+                                    class="w-full h-[196px] object-cover rounded-lg">
+                                <div class="relative">
+                                    <img src="{{ asset($post->medias[2]->media_path_name) }}" alt="Post Image"
+                                        class="w-full h-[196px] object-cover rounded-lg">
+                                    @if (count($post->medias) > 3)
+                                        <div class="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center cursor-pointer view-more"
+                                            data-post-id="{{ $post->id }}">
+                                            <span class="text-white text-2xl font-bold"><i class="fas fa-plus"></i>
+                                                {{ count($post->medias) - 3 }}</span>
+                                        </div>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-1 mt-1">
+                            @if (count($post->medias) > 3)
+                                <img src="{{ asset($post->medias[3]->media_path_name) }}" alt="Post Image"
+                                    class="w-full h-[196px] object-cover rounded-lg">
+                            @else
+                                <div class="w-full h-[196px] bg-gray-300 rounded-lg"></div>
+                            @endif
+                            @if (count($post->medias) > 4)
+                                <img src="{{ asset($post->medias[4]->media_path_name) }}" alt="Post Image"
+                                    class="w-full h-[196px] object-cover rounded-lg">
+                            @else
+                                <div class="w-full h-[196px] bg-gray-300 rounded-lg"></div>
+                            @endif
+                        </div>
+                    @endif
+                @else
+                @endif
+            </div>
+
+            <!-- Post Actions -->
+            <div class="p-4">
+                <div class="flex items-center justify-between mb-3">
+                    <div class="flex items-center space-x-1">
+                        <div class="flex -space-x-1">
+                            <div
+                                class="w-5 h-5 bg-blue-600 rounded-full border border-white flex items-center justify-center">
+                                <i class="fas fa-thumbs-up text-white text-xs"></i>
+                            </div>
+                            <div
+                                class="w-5 h-5 bg-red-600 rounded-full border border-white flex items-center justify-center">
+                                <i class="fas fa-heart text-white text-xs"></i>
+                            </div>
+                        </div>
+                        <span id="likes-{{ $post->id }}"
+                            class="text-sm text-gray-500 ml-2">{{ count($post->likes) }}</span>
                     </div>
-                    <span id="likes-{{ $post->id }}" class="text-sm text-gray-500 ml-2">{{ count($post->likes) }}</span>
+                    <div class="flex items-center space-x-4 text-sm text-gray-500">
+                        <span><span id="comment-{{ $post->id }}">{{ count($post->comments) }}</span> comments</span>
+                    </div>
                 </div>
-                <div class="flex items-center space-x-4 text-sm text-gray-500">
-                    <span><span id="comment-{{ $post->id }}">{{ count($post->comments) }}</span> comments</span>
-                </div>
-            </div>
 
-            <div class="flex items-center justify-between pt-2 border-t border-gray-200">
-                <button data={{$post->id}} class="like-button flex-1 flex items-center justify-center space-x-2 py-2 rounded-lg hover:bg-gray-100">
-                    <i class="far fa-thumbs-up text-gray-600"></i>
-                    <span class="text-gray-600 font-medium">Like</span>
-                </button>
-                <button data={{$post->id}} class="comment-button flex-1 flex items-center justify-center space-x-2 py-2 rounded-lg hover:bg-gray-100">
-                    <i class="far fa-comment text-gray-600"></i>
-                    <span class="text-gray-600 font-medium">Comment</span>
-                </button>
+                <div class="flex items-center justify-between pt-2 border-t border-gray-200">
+                    <button data={{ $post->id }}
+                        class="like-button flex-1 flex items-center justify-center space-x-2 py-2 rounded-lg hover:bg-gray-100">
+                        <i class="far fa-thumbs-up text-gray-600"></i>
+                        <span class="text-gray-600 font-medium">Like</span>
+                    </button>
+                    <button data={{ $post->id }}
+                        class="comment-button flex-1 flex items-center justify-center space-x-2 py-2 rounded-lg hover:bg-gray-100">
+                        <i class="far fa-comment text-gray-600"></i>
+                        <span class="text-gray-600 font-medium">Comment</span>
+                    </button>
+                </div>
+                <div class="comments"></div>
             </div>
-            <div class="comments"></div>
         </div>
-    </div>
     @endforeach
 @endsection
 
 @push('scripts')
-<script>
-    const csrfToken = "{{ csrf_token() }}";
+    <script>
+        const csrfToken = "{{ csrf_token() }}";
 
-    // Post Listeners to the buttons for fetch
-    document.addEventListener('DOMContentLoaded', () => {
-        const likeButtons = document.querySelectorAll('.like-button');
+        // Post Listeners to the buttons for fetch
+        document.addEventListener('DOMContentLoaded', () => {
+            const likeButtons = document.querySelectorAll('.like-button');
 
-        likeButtons.forEach(button => {
-            button.addEventListener('click', async () => {
-                const postId = button.getAttribute('data');
-                console.log(postId);
+            likeButtons.forEach(button => {
+                button.addEventListener('click', async () => {
+                    const postId = button.getAttribute('data');
+                    console.log(postId);
                     const response = await fetch("{{ route('common.feed.like') }}", {
                         method: 'POST',
-                        headers:{
+                        headers: {
                             'Content-Type': 'application/json',
                             'X-CSRF-Token': csrfToken
                         },
-                        body: JSON.stringify({post_id: postId})
+                        body: JSON.stringify({
+                            post_id: postId
+                        })
                     })
 
                     const data = await response.json();
 
-                    if(response.ok){
+                    if (response.ok) {
                         button.classList.add('text-blue');
                         button.classList.remove('hover:bg-gray-100');
-                        document.querySelector('#likes-' + postId).textContent = parseInt(document.querySelector('#likes-' + postId).textContent) + 1;
+                        document.querySelector('#likes-' + postId).textContent = parseInt(
+                            document.querySelector('#likes-' + postId).textContent) + 1;
                     }
-                })})
-            
-        document.querySelectorAll('.comment-button').forEach(button => {
-        button.addEventListener('click', () => {
-        const postId = button.getAttribute('data');
-        const postElement = document.getElementById('post-' + postId);
-        const commentsSection = postElement.querySelector('.comments');
-
-        // prevent duplicate box
-        if (postElement.querySelector('.comment-box')) return;
-
-        // create wrapper
-        const commentBox = document.createElement('div');
-        commentBox.className = "comment-box flex items-center space-x-2 mt-2";
-
-        // input
-        const input = document.createElement('input');
-        input.type = "text";
-        input.placeholder = "Write a comment...";
-        input.className = "comment-input flex-1 border rounded-lg px-3 py-2 focus:outline-none focus:ring focus:border-blue-300";
-
-        // button
-        const submitBtn = document.createElement('button');
-        submitBtn.textContent = "Post";
-        submitBtn.className = "submit-comment bg-blue-500 text-white px-4 py-2 rounded-lg";
-
-        // append children
-        commentBox.appendChild(input);
-        commentBox.appendChild(submitBtn);
-        commentsSection.appendChild(commentBox);
-
-        // submit handler
-        submitBtn.addEventListener('click', async () => {
-            const comment = input.value.trim();
-            if (!comment) return;
-
-            try {
-                let response = await fetch("{{ route('common.feed.comment') }}", {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': csrfToken
-                    },
-                    body: JSON.stringify({ comment: comment , post_id: postId })
-                });
-
-                if (response.ok) {
-                    let data = await response.json();
-
-                    // create new comment div
-                    const newComment = document.createElement('div');
-                    newComment.className = "bg-gray-100 p-2 rounded-lg flex space-between";
-                    const newCommentText = document.createElement('p');
-                    newCommentText.textContent = data.comment;
-                    // const commentedBy= document.createElement('p');
-                    // commentedBy.textContent = "Commented by " + data.user.name;
-                    // newCommentDate.className = "text-gray-500";
-                    newComment.appendChild(newCommentText);
-                    // newComment.appendChild(commentedBy);
-
-                    // add to comments section
-                    commentsSection.appendChild(newComment);
-
-                    // update likes count
-                    document.querySelector('#comment-' + postId).textContent = parseInt(document.querySelector('#likes-' + postId).textContent) + 1;
-
-                    // reset input
-                    input.value = "";
-                
-                    newComment.textContent = data.comment; 
-                    
-                    // insert above the input box
-                    commentsSection.insertBefore(newComment, commentBox);
-
-                    input.value = ""; // reset
-                } else {
-                    alert('Failed to post comment');
-                }
-            } catch (err) {
-                console.error(err);
-                alert('Something went wrong');
-            }
-        });
-
-        // submit with Enter key
-        input.addEventListener('keypress', e => {
-            if (e.key === 'Enter') {
-                submitBtn.click();
-            }
-        });
-
-        // remove all of this when the comment button is clicked 
-        button.addEventListener('click', () => {
-            commentBox.remove();
-        });
-    });
-}); 
+                })
             })
 
-</script>
+            document.querySelectorAll('.comment-button').forEach(button => {
+                button.addEventListener('click', () => {
+                    const postId = button.getAttribute('data');
+                    const postElement = document.getElementById('post-' + postId);
+                    const commentsSection = postElement.querySelector('.comments');
+
+                    // prevent duplicate box
+                    if (postElement.querySelector('.comment-box')) return;
+
+                    // create wrapper
+                    const commentBox = document.createElement('div');
+                    commentBox.className = "comment-box flex items-center space-x-2 mt-2";
+
+                    // input
+                    const input = document.createElement('input');
+                    input.type = "text";
+                    input.placeholder = "Write a comment...";
+                    input.className =
+                        "comment-input flex-1 border rounded-lg px-3 py-2 focus:outline-none focus:ring focus:border-blue-300";
+
+                    // button
+                    const submitBtn = document.createElement('button');
+                    submitBtn.textContent = "Post";
+                    submitBtn.className =
+                        "submit-comment bg-blue-500 text-white px-4 py-2 rounded-lg";
+
+                    // append children
+                    commentBox.appendChild(input);
+                    commentBox.appendChild(submitBtn);
+                    commentsSection.appendChild(commentBox);
+
+                    // submit handler
+                    submitBtn.addEventListener('click', async () => {
+                        const comment = input.value.trim();
+                        if (!comment) return;
+
+                        try {
+                            let response = await fetch(
+                                "{{ route('common.feed.comment') }}", {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                        'X-CSRF-TOKEN': csrfToken
+                                    },
+                                    body: JSON.stringify({
+                                        comment: comment,
+                                        post_id: postId
+                                    })
+                                });
+
+                            if (response.ok) {
+                                let data = await response.json();
+
+                                // create new comment div
+                                const newComment = document.createElement('div');
+                                newComment.className =
+                                    "bg-gray-100 p-2 rounded-lg flex space-between";
+                                const newCommentText = document.createElement('p');
+                                newCommentText.textContent = data.comment;
+                                newComment.appendChild(newCommentText);
+
+                                // add to comments section
+                                commentsSection.appendChild(newComment);
+
+                                // update likes count
+                                document.querySelector('#comment-' + postId)
+                                    .textContent = parseInt(document.querySelector(
+                                        '#likes-' + postId).textContent) + 1;
+
+                                // reset input
+                                input.value = "";
+
+                                newComment.textContent = data.comment;
+
+                                // insert above the input box
+                                commentsSection.insertBefore(newComment, commentBox);
+
+                                input.value = ""; // reset
+                            } else {
+                                alert('Failed to post comment');
+                            }
+                        } catch (err) {
+                            console.error(err);
+                            alert('Something went wrong');
+                        }
+                    });
+
+                    // submit with Enter key
+                    input.addEventListener('keypress', e => {
+                        if (e.key === 'Enter') {
+                            submitBtn.click();
+                        }
+                    });
+
+                    // remove all of this when the comment button is clicked 
+                    button.addEventListener('click', () => {
+                        commentBox.remove();
+                    });
+                });
+            });
+        })
+    </script>
 @endpush
