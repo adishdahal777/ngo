@@ -38,13 +38,13 @@
             <input type="hidden" id="product_service_charge" name="product_service_charge" value="0">
             <input type="hidden" id="product_delivery_charge" name="product_delivery_charge" value="0">
             <input type="hidden" name="success_url"
-                value="{{ route('payment.success', [
+                value="{{ route('people.donations.success', [
                     'ngo_id' => $ngo_id,
                     'donation_amount' => $donation_amount,
                     'payment_method' => $payment_method,
                 ]) }}">
 
-            <input type="hidden" name="failure_url" value="{{ route('payment.fail') }}">
+            <input type="hidden" name="failure_url" value="{{ route('people.donations.fail') }}">
             <input type="hidden" id="signed_field_names" name="signed_field_names"
                 value="total_amount,transaction_uuid,product_code">
             <input type="hidden" id="signature" name="signature">
@@ -58,7 +58,6 @@
         <div class="mt-6 text-center text-sm text-gray-500">
             <p>You will be redirected to eSewa to complete your payment.</p>
         </div>
-    </div>
     </div>
 
     <script>

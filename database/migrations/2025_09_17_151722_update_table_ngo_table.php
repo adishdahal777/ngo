@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::table('ngos', function (Blueprint $table) {
             $table->string('category')->nullable()->after('location');
+            $table->string('logo')->nullable()->after('photos');
             $table->string('subcategory')->nullable()->after('category');
         });
     }

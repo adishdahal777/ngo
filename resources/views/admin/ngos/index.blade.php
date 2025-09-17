@@ -11,12 +11,19 @@
             @foreach ($ngos as $ngo)
                 <div class="p-4 bg-white rounded-lg shadow hover:bg-gray-50 flex items-start space-x-3">
                     <div class="w-12 h-12 bg-gray-300 rounded-full flex items-center justify-center">
-                        @if ($ngo->ngo && $ngo->ngo->photos && count($ngo->ngo->photos) > 0)
-                            <img src="{{ Storage::url($ngo->ngo->photos[0]) }}" alt="{{ $ngo->name }}"
+                        @php
+                            $photos = is_string($ngo->ngo->photos)
+                                ? json_decode($ngo->ngo->photos, true)
+                                : $ngo->ngo->photos;
+                        @endphp
+
+                        @if ($photos && count($photos) > 0)
+                            <img src="{{ Storage::url($photos[0]) }}" alt="{{ $ngo->name }}"
                                 class="w-full h-full object-cover rounded-full">
                         @else
                             <i class="fas fa-building text-gray-500"></i>
                         @endif
+
                     </div>
                     <div class="flex-1">
                         <a href="{{ route('admin.ngos.show', $ngo->id) }}"

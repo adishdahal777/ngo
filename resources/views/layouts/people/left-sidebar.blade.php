@@ -73,7 +73,7 @@
                         <div class=" rounded-lg overflow-hidden">
                             @if ($ngo->logo)
                                 <img src="{{ asset('storage/' . $ngo->logo) }}" alt="{{ $ngo->name }}"
-                                    class="w-full h-full object-cover">
+                                    class="w-10 h-10 object-cover">
                             @else
                                 <span class="iconify w-full h-full flex items-center justify-center"
                                     data-icon="fluent-color:building-48" data-width="34" data-height="34"></span>

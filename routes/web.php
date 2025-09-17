@@ -1,8 +1,9 @@
 <?php
 
-use App\Http\Controllers\Ngo;
 use App\Http\Controllers\Auth;
 use App\Http\Controllers\Admin;
+use App\Http\Controllers\Common;
+use App\Http\Controllers\Ngo;
 use App\Http\Controllers\People;
 use App\Http\Controllers\Website;
 use Illuminate\Support\Facades\Route;
@@ -25,7 +26,6 @@ Route::get('/', function () {
 })->name('welcome');
 
 Route::middleware('auth')->group(function () {
-
 
     Route::get('/switch-to-ngo/{ngo_id}', [Auth\SettingController::class, 'switchToNgo'])->middleware('role:2')->name('switch.to.ngo');
     Route::get('/switch-back', [Auth\SettingController::class, 'switchBack'])->name('switch.back');
@@ -75,9 +75,6 @@ Route::middleware('auth')->group(function () {
         Route::get('/profile/edit', [People\ProfileController::class, 'edit'])->name('people.profile.edit');
         Route::put('/profile', [People\ProfileController::class, 'update'])->name('people.profile.update');
 
-        // NGO Search Routes
-        Route::get('/ngos/search', [People\NgoSearchController::class, 'index'])->name('people.ngo.search');
-
         // Newsfeed Routes
         Route::get('/newsfeed', [People\NewsfeedController::class, 'index'])->name('people.newsfeed');
 
@@ -114,9 +111,11 @@ Route::middleware('auth')->group(function () {
 
     // Shared routes (ngo and people, role_id=1,2)
     Route::middleware('role:1,2')->group(function () {
-        Route::get('/feed', function () {
-            return view('common.feed.index');
-        })->name('common.feed');
+        Route::get('/feed', [Common\FeedController::class, 'index'])->name('common.feed');
+        Route::post('/feed/like', [Common\FeedController::class, 'like'])->name('common.feed.like');
+        Route::post('/feed/comment', [Common\FeedController::class, 'comment'])->name('common.feed.comment');
+
+        Route::get('/ngos/search', [People\NgoSearchController::class, 'index'])->name('people.ngo.search');
     });
 });
 
