@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Ngo;
 
 use App\Http\Controllers\Controller;
 use App\Models\Ngo;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -39,7 +40,9 @@ class NgoController extends Controller
             'logo' => 'nullable|image|mimes:jpg,png,jpeg|max:2048',
         ]);
 
-        $ngo->fill($request->only(['name', 'mission', 'description', 'location', 'category', 'sub_categories']));
+        $user = User::find($user->id)
+            ->fill($request->only(['name']));
+        $ngo->fill($request->only(['mission', 'description', 'location', 'category', 'sub_categories']));
 
         if ($request->hasFile('logo')) {
             $path = $request->file('logo')->store('ngo_logos', 'public');
@@ -47,7 +50,7 @@ class NgoController extends Controller
         }
 
         $ngo->save();
-
+        $user->save();
         // Associate the NGO with the user if not already linked
         if (!$user->ngo) {
             $user->ngo()->save($ngo);
@@ -56,11 +59,7 @@ class NgoController extends Controller
         return redirect()->route('ngo.profile')->with('success', 'NGO profile updated successfully.');
     }
 
-    public function events()
-    {
-        // Placeholder for events listing
-        return view('ngo.events.index');
-    }
+
 
     public function volunteers()
     {

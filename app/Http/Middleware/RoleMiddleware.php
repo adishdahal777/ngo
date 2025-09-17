@@ -15,11 +15,27 @@ class RoleMiddleware
         }
 
         $user = Auth::user();
+        $viewAs = session('view_as', $user->role_id);
 
-        if (!in_array($user->role_id, $roles)) {
-            return redirect()->route('home')->with('error', 'You do not have permission to access this page.');
+        $roles = array_map('intval', $roles);
+
+        if (in_array($user->role_id, $roles) || in_array($viewAs, $roles)) {
+            if (in_array(1, $roles) && $viewAs === 1) {
+                $hasNgo = $user->isNgo() && $user->ngo;
+                $ownsNgo = $user->isPeople() && $user->ownedNgos()->where('id', session('view_as_ngo_id'))->exists();
+                if (!$hasNgo && !$ownsNgo) {
+                    return redirect()->route('people.feed')->with('error', 'You do not have permission to view as an NGO.');
+                }
+            }
+            return $next($request);
         }
 
-        return $next($request);
+        if ($user->isAdmin()) {
+            return redirect()->route('admin.dashboard')->with('error', 'Unauthorized access.');
+        } elseif ($user->isNgo()) {
+            return redirect()->route('common.feed')->with('error', 'Unauthorized access.');
+        } else {
+            return redirect()->route('common.feed')->with('error', 'Unauthorized access.');
+        }
     }
 }

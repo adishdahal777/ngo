@@ -52,7 +52,7 @@ class User extends Authenticatable
 
     public function ngo()
     {
-        return $this->hasOne(Ngo::class, 'user_id');
+        return $this->hasOne(Ngo::class, 'user_id', 'id');
     }
 
     public function isAdmin()

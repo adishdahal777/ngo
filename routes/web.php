@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Website;
 use App\Http\Controllers\Ngo;
 use App\Http\Controllers\People;
+use App\Http\Controllers\Auth;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,7 +19,16 @@ use App\Http\Controllers\People;
 // For authentication routes
 require __DIR__ . '/auth.php';
 
+Route::get('/', function () {
+    return view('welcome');
+})->name('welcome');
+
 Route::middleware('auth')->group(function () {
+
+
+    Route::get('/switch-to-ngo/{ngo_id}', [Auth\SettingController::class, 'switchToNgo'])->middleware('role:2')->name('switch.to.ngo');
+    Route::get('/switch-back', [Auth\SettingController::class, 'switchBack'])->name('switch.back');
+
 
     Route::middleware('role:0')->prefix('admin')->name('admin.')->group(function () {
         Route::get('/dashboard', function () {
@@ -32,7 +42,11 @@ Route::middleware('auth')->group(function () {
         Route::get('/profile', [Ngo\NgoController::class, 'show'])->name('ngo.profile');
         Route::get('/profile/edit', [Ngo\NgoController::class, 'edit'])->name('ngo.profile.edit');
         Route::put('/profile', [Ngo\NgoController::class, 'update'])->name('ngo.profile.update');
+
         Route::get('/events', [Ngo\EventController::class, 'events'])->name('ngo.events');
+        Route::get('/events/create', [Ngo\EventController::class, 'createEvent'])->name('ngo.events.create');
+        Route::post('/events', [Ngo\EventController::class, 'storeEvent'])->name('ngo.events.store');
+
         Route::get('/volunteers', [Ngo\VolunteerController::class, 'volunteers'])->name('ngo.volunteers');
         Route::get('/donations', [Ngo\DonationController::class, 'donations'])->name('ngo.donations');
         Route::get('/notifications', [Ngo\NgoController::class, 'notifications'])->name('ngo.notifications');

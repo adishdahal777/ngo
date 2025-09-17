@@ -43,6 +43,11 @@
                         {{ session('success') }}
                     </div>
                 @endif
+                @if (session('error'))
+                    <div class="mb-4 p-4 bg-red-100 text-red-700 rounded-lg">
+                        {{ session('error') }}
+                    </div>
+                @endif
                 @yield('content')
             </div>
         </div>
@@ -53,21 +58,30 @@
     </div>
 
 
-    <script>
-        // Toggle notification dropdown
-        $('.notification-btn').click(function(e) {
-            e.stopPropagation();
-            $('.notification-dropdown').toggleClass('hidden');
-            $('.profile-dropdown').addClass('hidden');
-        });
 
-        // Toggle profile dropdown
-        $('.profile-btn').click(function(e) {
-            e.stopPropagation();
-            $('.profile-dropdown').toggleClass('hidden');
-            $('.notification-dropdown').addClass('hidden');
+    <script>
+        $(document).ready(function() {
+            $('.notification-btn').on('click', function() {
+                $('.notification-dropdown').toggleClass('hidden');
+                $('.profile-dropdown').addClass('hidden');
+            });
+
+            $('.profile-btn').on('click', function() {
+                $('.profile-dropdown').toggleClass('hidden');
+                $('.notification-dropdown').addClass('hidden');
+            });
+
+            $(document).on('click', function(e) {
+                if (!$(e.target).closest('.notification-btn, .notification-dropdown').length) {
+                    $('.notification-dropdown').addClass('hidden');
+                }
+                if (!$(e.target).closest('.profile-btn, .profile-dropdown').length) {
+                    $('.profile-dropdown').addClass('hidden');
+                }
+            });
         });
     </script>
+    @stack('scripts')
 </body>
 
 </html>
