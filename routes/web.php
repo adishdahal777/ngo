@@ -1,7 +1,8 @@
 <?php
 
-use App\Http\Controllers\Ngo;
 use App\Http\Controllers\Auth;
+use App\Http\Controllers\Common;
+use App\Http\Controllers\Ngo;
 use App\Http\Controllers\People;
 use App\Http\Controllers\Website;
 use Illuminate\Support\Facades\Route;
@@ -17,7 +18,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 // For authentication routes
-require __DIR__ . '/auth.php';
+require __DIR__.'/auth.php';
 
 Route::get('/', function () {
     return view('welcome');
@@ -25,10 +26,8 @@ Route::get('/', function () {
 
 Route::middleware('auth')->group(function () {
 
-
     Route::get('/switch-to-ngo/{ngo_id}', [Auth\SettingController::class, 'switchToNgo'])->middleware('role:2')->name('switch.to.ngo');
     Route::get('/switch-back', [Auth\SettingController::class, 'switchBack'])->name('switch.back');
-
 
     Route::middleware('role:0')->prefix('admin')->name('admin.')->group(function () {
         Route::get('/dashboard', function () {
@@ -85,7 +84,6 @@ Route::middleware('auth')->group(function () {
         Route::get('/notifications', [People\NotificationController::class, 'index'])->name('people.notifications');
         Route::post('/notifications/{id}/read', [People\NotificationController::class, 'markAsRead'])->name('people.notifications.read');
 
-
         // NGO Profile Routes
         Route::get('/ngo/{id}', [People\NgoProfileController::class, 'show'])->name('people.ngo.profile');
         Route::post('/ngo/{id}/favorite', [People\NgoProfileController::class, 'toggleFavorite'])->name('people.ngo.favorite');
@@ -93,9 +91,9 @@ Route::middleware('auth')->group(function () {
 
     // Shared routes (ngo and people, role_id=1,2)
     Route::middleware('role:1,2')->group(function () {
-        Route::get('/feed', function () {
-            return view('common.feed.index');
-        })->name('common.feed');
+        Route::get('/feed', [Common\FeedController::class, 'index'])->name('common.feed');
+        Route::post('/feed/like', [Common\FeedController::class, 'like'])->name('common.feed.like');
+        Route::post('/feed/comment', [Common\FeedController::class, 'comment'])->name('common.feed.comment');
     });
 });
 

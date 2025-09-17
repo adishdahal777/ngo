@@ -23,7 +23,8 @@ class DatabaseSeeder extends Seeder
             // RoleSeeder::class,
             // UserSeeder::class,
             // NgoSeeder::class,
-            EventsSeeder::class,
+            // EventsSeeder::class,
+            PostSeeder::class,
         ]);
     }
 }
