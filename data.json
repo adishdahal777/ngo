@@ -1,0 +1,18 @@
+{
+    "id": 2,
+    "user_id": 7,
+    "mission": "Empowering communities through education and sustainability.",
+    "description": "Sample NGO is dedicated to improving lives through education, environmental initiatives, and community support.",
+    "location": "Kathmandu, Nepal",
+    "category": "Education",
+    "subcategory": "Community Development",
+    "photos": "[\"\\\/images\\\/ngo\\\/sample1.jpg\",\"\\\/images\\\/ngo\\\/sample2.jpg\"]",
+    "created_at": "2025-09-17T15:19:54.000000Z",
+    "updated_at": "2025-09-17T15:19:54.000000Z",
+    "pivot": {
+        "user_id": 3,
+        "ngo_id": 2,
+        "created_at": "2025-09-17T15:49:39.000000Z",
+        "updated_at": "2025-09-17T15:49:39.000000Z"
+    }
+}

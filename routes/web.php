@@ -1,0 +1,76 @@
+<?php
+
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Website;
+use App\Http\Controllers\People;
+
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+|
+| Here is where you can register web routes for your application. These
+| routes are loaded by the RouteServiceProvider and all of them will
+| be assigned to the "web" middleware group. Make something great!
+|
+*/
+// For authentication routes
+require __DIR__ . '/auth.php';
+
+Route::middleware('auth')->group(function () {
+
+    Route::middleware('role:0')->prefix('admin')->name('admin.')->group(function () {
+        Route::get('/dashboard', function () {
+            return view('admin.dashboard');
+        })->name('dashboard');
+    });
+
+    // NGO routes
+    Route::middleware('role:1')->prefix('ngo')->name('ngo.')->group(function () {
+
+        Route::get('/dashboard', function () {
+            return view('ngo.dashboard');
+        })->name('dashboard');
+    });
+
+    // People routes
+    Route::middleware('role:2')->prefix('people')->group(function () {
+        // User Profile Routes
+        Route::get('/profile', [People\ProfileController::class, 'show'])->name('people.profile');
+        Route::get('/profile/edit', [People\ProfileController::class, 'edit'])->name('people.profile.edit');
+        Route::put('/profile', [People\ProfileController::class, 'update'])->name('people.profile.update');
+
+        // NGO Search Routes
+        Route::get('/ngos/search', [People\NgoSearchController::class, 'index'])->name('people.ngo.search');
+
+        // Newsfeed Routes
+        Route::get('/newsfeed', [People\NewsfeedController::class, 'index'])->name('people.newsfeed');
+
+        // Volunteer Opportunities Routes
+        Route::get('/volunteer/opportunities', [People\VolunteerController::class, 'index'])->name('people.volunteer.opportunities');
+
+        // Donations Routes
+        Route::get('/donations', [People\DonationController::class, 'index'])->name('people.donations');
+
+        // Notifications Routes
+        Route::get('/notifications', [People\NotificationController::class, 'index'])->name('people.notifications');
+
+        // NGO Profile Routes
+        Route::get('/ngo/{id}', [People\NgoProfileController::class, 'show'])->name('people.ngo.profile');
+        Route::post('/ngo/{id}/favorite', [People\NgoProfileController::class, 'toggleFavorite'])->name('people.ngo.favorite');
+    });
+
+    // Shared routes (ngo and people, role_id=1,2)
+    Route::middleware('role:1,2')->group(function () {
+        Route::get('/feed', function () {
+            return view('common.feed.index');
+        })->name('common.feed');
+    });
+});
+
+
+Route::get('/privacy', [Website\StaticPageController::class, 'privacy'])->name('privacy');
+Route::get('/terms', [Website\StaticPageController::class, 'terms'])->name('terms');
+Route::get('/advertising', [Website\StaticPageController::class, 'advertising'])->name('advertising');
+Route::get('/cookies', [Website\StaticPageController::class, 'cookies'])->name('cookies');
+Route::get('/more', [Website\StaticPageController::class, 'more'])->name('more');
