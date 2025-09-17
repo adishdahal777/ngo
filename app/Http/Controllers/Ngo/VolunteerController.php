@@ -23,7 +23,7 @@ class VolunteerController extends Controller
             return redirect()->route('ngo.volunteers')->with('error', 'Unauthorized action.');
         }
 
-        $event->volunteers()->updateExistingPivot($userId, ['is_verified' => true]);
+        $event->volunteers()->updateExistingPivot($userId, ['status' => 'accepted']);
 
         $volunteer = User::findOrFail($userId);
         $volunteer->notify(new \App\Notifications\VolunteerVerified($event));

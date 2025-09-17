@@ -48,6 +48,8 @@ Route::middleware('auth')->group(function () {
         Route::post('/events', [Ngo\EventController::class, 'storeEvent'])->name('ngo.events.store');
 
         Route::get('/volunteers', [Ngo\VolunteerController::class, 'volunteers'])->name('ngo.volunteers');
+        Route::post('/volunteers/{eventId}/{userId}/verify', [Ngo\VolunteerController::class, 'verifyVolunteer'])->name('ngo.volunteers.verify');
+
         Route::get('/donations', [Ngo\DonationController::class, 'donations'])->name('ngo.donations');
         Route::get('/notifications', [Ngo\NgoController::class, 'notifications'])->name('ngo.notifications');
 
@@ -81,6 +83,8 @@ Route::middleware('auth')->group(function () {
 
         // Notifications Routes
         Route::get('/notifications', [People\NotificationController::class, 'index'])->name('people.notifications');
+        Route::post('/notifications/{id}/read', [People\NotificationController::class, 'markAsRead'])->name('people.notifications.read');
+
 
         // NGO Profile Routes
         Route::get('/ngo/{id}', [People\NgoProfileController::class, 'show'])->name('people.ngo.profile');

@@ -15,18 +15,9 @@ class RoleMiddleware
         }
 
         $user = Auth::user();
-        $viewAs = session('view_as', $user->role_id);
-
         $roles = array_map('intval', $roles);
 
-        if (in_array($user->role_id, $roles) || in_array($viewAs, $roles)) {
-            if (in_array(1, $roles) && $viewAs === 1) {
-                $hasNgo = $user->isNgo() && $user->ngo;
-                $ownsNgo = $user->isPeople() && $user->ownedNgos()->where('id', session('view_as_ngo_id'))->exists();
-                if (!$hasNgo && !$ownsNgo) {
-                    return redirect()->route('people.feed')->with('error', 'You do not have permission to view as an NGO.');
-                }
-            }
+        if (in_array($user->role_id, $roles)) {
             return $next($request);
         }
 

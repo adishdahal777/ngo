@@ -33,7 +33,7 @@
                                     <p class="text-sm text-gray-600">{{ $volunteer->email }}</p>
                                 </div>
                                 <div>
-                                    @if ($volunteer->pivot->is_verified)
+                                    @if ($volunteer->pivot->status === 'accepted')
                                         <span class="text-green-600 text-sm">Verified</span>
                                     @else
                                         <form action="{{ route('ngo.volunteers.verify', [$event->id, $volunteer->id]) }}"

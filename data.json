@@ -1,18 +1,18 @@
 {
-    "id": 2,
-    "user_id": 7,
-    "mission": "Empowering communities through education and sustainability.",
-    "description": "Sample NGO is dedicated to improving lives through education, environmental initiatives, and community support.",
-    "location": "Kathmandu, Nepal",
-    "category": "Education",
-    "subcategory": "Community Development",
-    "photos": "[\"\\\/images\\\/ngo\\\/sample1.jpg\",\"\\\/images\\\/ngo\\\/sample2.jpg\"]",
-    "created_at": "2025-09-17T15:19:54.000000Z",
-    "updated_at": "2025-09-17T15:19:54.000000Z",
+    "id": 4,
+    "name": "Audrey Hyatt",
+    "email": "myra48@example.net",
+    "profile_photo": null,
+    "email_verified_at": "2025-09-17T13:44:30.000000Z",
+    "role_id": 2,
+    "owner_id": null,
+    "verified": true,
+    "created_at": "2025-09-17T13:44:31.000000Z",
+    "updated_at": "2025-09-17T13:44:31.000000Z",
     "pivot": {
-        "user_id": 3,
-        "ngo_id": 2,
-        "created_at": "2025-09-17T15:49:39.000000Z",
-        "updated_at": "2025-09-17T15:49:39.000000Z"
+        "event_id": 1,
+        "user_id": 4,
+        "created_at": "2025-09-17T17:27:59.000000Z",
+        "updated_at": "2025-09-17T17:49:01.000000Z"
     }
 }

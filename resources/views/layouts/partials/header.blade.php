@@ -10,16 +10,16 @@
         <!-- Center Navigation -->
         <div class="flex min-w-xl max-w-2xl justify-around space-x-2">
             <a href="{{ route('common.feed') }}" class="cursor-pointer">
-                <span class="iconify text-orange-600 text-2xl" data-icon="mdi:home"></span>
+                <span class="iconify text-orange-600 text-xl" data-icon="mdi:home"></span>
             </a>
             <a href="{{ route('common.feed') }}" class="hover:text-gray-400 cursor-pointer">
-                <span class="iconify text-gray-600 text-2xl" data-icon="mdi:newspaper"></span>
+                <span class="iconify text-gray-600 text-xl" data-icon="mdi:newspaper"></span>
             </a>
             <a href="{{ route('people.ngo.search') }}" class="hover:text-gray-400 cursor-pointer">
-                <span class="iconify text-gray-600 text-2xl" data-icon="mdi:magnify"></span>
+                <span class="iconify text-gray-600 text-xl" data-icon="mdi:magnify"></span>
             </a>
             <a href="{{ route('people.volunteer.opportunities') }}" class="hover:text-gray-400 cursor-pointer">
-                <span class="iconify text-gray-600 text-2xl" data-icon="mdi:account-group"></span>
+                <span class="iconify text-gray-600 text-xl" data-icon="mdi:account-group"></span>
             </a>
         </div>
 
@@ -60,7 +60,7 @@
                         @endforelse
                     </div>
                     <div class="p-3 border-t border-gray-200">
-                        <a href="{{ route(auth()->user()->isNgo() || session('view_as') === 1 ? 'ngo.notifications' : 'people.notifications') }}"
+                        <a href="{{ route(auth()->user()->isNgo() ? 'ngo.notifications' : 'people.notifications') }}"
                             class="w-full text-center text-blue-600 hover:bg-gray-50 py-2 rounded-lg block">
                             See all notifications
                         </a>
@@ -83,7 +83,7 @@
                 <div
                     class="profile-dropdown absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-lg border border-gray-200 hidden z-50">
                     <div class="p-4">
-                        <a href="{{ route(auth()->user()->isNgo() || session('view_as') === 1 ? 'ngo.profile' : 'people.profile') }}"
+                        <a href="{{ route(auth()->user()->isNgo() ? 'ngo.profile' : 'people.profile') }}"
                             class="flex items-center space-x-3 p-2 hover:bg-gray-50 rounded-lg cursor-pointer">
                             <div class="w-10 h-10 bg-gray-300 rounded-full overflow-hidden">
                                 @if (auth()->user()->profile_photo)
@@ -103,7 +103,7 @@
                     <hr class="border-gray-200">
 
                     <div class="p-2">
-                        @if (auth()->user()->ownedNgos->count() && (auth()->user()->isPeople() && session('view_as') !== 1))
+                        @if (auth()->user()->isPeople() && auth()->user()->ownedNgos->count())
                             @foreach (auth()->user()->ownedNgos as $ngo)
                                 <a href="{{ route('switch.to.ngo', $ngo->id) }}"
                                     class="flex items-center space-x-3 p-2 hover:bg-gray-50 rounded-lg cursor-pointer">
@@ -113,14 +113,16 @@
                                     <span class="text-gray-900">Switch to {{ $ngo->name }}</span>
                                 </a>
                             @endforeach
-                        @elseif (auth()->user()->isNgo() || session('view_as') === 1)
-                            <a href="{{ route('switch.back') }}"
-                                class="flex items-center space-x-3 p-2 hover:bg-gray-50 rounded-lg cursor-pointer">
-                                <div class="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
-                                    <span class="iconify text-gray-600" data-icon="mdi:account"></span>
-                                </div>
-                                <span class="text-gray-900">Switch to My Personal Account</span>
-                            </a>
+                        @elseif (auth()->user()->isNgo())
+                            @if (session('original_user_id'))
+                                <a href="{{ route('switch.back') }}"
+                                    class="flex items-center space-x-3 p-2 hover:bg-gray-50 rounded-lg cursor-pointer">
+                                    <div class="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
+                                        <span class="iconify text-gray-600" data-icon="mdi:account"></span>
+                                    </div>
+                                    <span class="text-gray-900">Switch to My Personal Account</span>
+                                </a>
+                            @endif
                         @endif
 
                         <form action="{{ route('logout') }}" method="POST"
