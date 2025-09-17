@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Website;
 use App\Http\Controllers\People;
+use App\Http\Controllers\Website;
+use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,7 +15,7 @@ use App\Http\Controllers\People;
 |
 */
 // For authentication routes
-require __DIR__ . '/auth.php';
+require __DIR__.'/auth.php';
 
 Route::middleware('auth')->group(function () {
 
@@ -48,9 +48,13 @@ Route::middleware('auth')->group(function () {
 
         // Volunteer Opportunities Routes
         Route::get('/volunteer/opportunities', [People\VolunteerController::class, 'index'])->name('people.volunteer.opportunities');
+        Route::post('/volunteer/apply', [People\VolunteerController::class, 'apply'])->name('people.volunteer.apply');
 
         // Donations Routes
         Route::get('/donations', [People\DonationController::class, 'index'])->name('people.donations');
+        Route::post('/donate/payment', [People\DonationController::class, 'showPaymentForm'])->name('donations.payment.request');
+        Route::get('/donation/payment/success', [People\DonationController::class, 'paymentSuccess'])->name('payment.success');
+        Route::get('/donation/payment/fail', [People\DonationController::class, 'paymentFail'])->name('payment.fail');
 
         // Notifications Routes
         Route::get('/notifications', [People\NotificationController::class, 'index'])->name('people.notifications');
@@ -67,7 +71,6 @@ Route::middleware('auth')->group(function () {
         })->name('common.feed');
     });
 });
-
 
 Route::get('/privacy', [Website\StaticPageController::class, 'privacy'])->name('privacy');
 Route::get('/terms', [Website\StaticPageController::class, 'terms'])->name('terms');

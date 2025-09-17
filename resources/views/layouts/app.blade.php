@@ -64,6 +64,7 @@
             $('.notification-dropdown').addClass('hidden');
         });
     </script>
+    @stack('scripts')
 </body>
 
 </html>
